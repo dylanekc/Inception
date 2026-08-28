@@ -7,7 +7,14 @@ mkdir -p /run/php
 # On vérifie si WordPress est déjà installé pour ne pas le refaire à chaque redémarrage
 if [ ! -f /var/www/html/wp-config.php ]; then
     echo "Installation de WordPress..."
-    
+
+    # 🕒 ON ATTEND QUE MARIADB SOIT PRET (Le secret anti-bug)
+    echo "Attente de MariaDB..."
+    while ! mariadb -h mariadb -u ${MYSQL_USER} -p${MYSQL_PASSWORD} --silent 2>/dev/null; do
+        sleep 2
+    done
+    echo "MariaDB est prêt !"
+
     # Téléchargement des fichiers de WordPress
     wp core download --allow-root
 
@@ -19,7 +26,7 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 
     # Création du deuxième utilisateur classique exigé par le sujet
     wp user create ${WP_USER} user@student.42.fr --role=author --user_pass=${WP_PASSWORD} --allow-root
-    
+
     echo "WordPress est installé avec succès !"
 fi
 
