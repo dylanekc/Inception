@@ -64,3 +64,20 @@ usermod -aG docker dylekici | ajoute lutilisateur groupe secret doker , permet l
 
 
 nano srcs/docker-compose.yml |
+
+
+wordpress le disign de la page fabrique la page , mariabdb stock lecriture te les mot de passe et nginx page securiser
+
+
+je make docker compose yml qui va lire les 3 dockerfile ca va cree me 3 conteneur
+
+
+docker sert a isoler les tache, plus facile a reperer les erreur et plus rapide et leger a modfier un conteneur (tache)
+
+
+
+Le Dockerfile sert de recette de fabrication pour installer les programmes, copier tes fichiers et configurer l'environnement afin de créer l'Image de ton conteneur.
+
+
+
+je lance make, qui exécute le docker-compose.yml. Ce dernier lit les Dockerfile pour construire les images, puis les allume en conteneurs. Au démarrage, ces conteneurs lancent mes scripts, se parlent sur le même réseau privé, et finalement NGINX affiche ma page WordPress !"

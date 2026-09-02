@@ -1,4 +1,7 @@
-all: up
+all:
+	mkdir -p /home/dylekcii/data/mariadb
+	mkdir -p /home/dylekcii/data/wordpress
+	docker-compose -f srcs/docker-compose.yml up -d --build
 
 up:
 	cd srcs && docker-compose up -d --build
