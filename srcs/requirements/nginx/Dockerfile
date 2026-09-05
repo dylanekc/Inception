@@ -1,7 +1,13 @@
 FROM debian:bullseye
 
-# Mise à jour et installation de NGINX et OpenSSL (pour le HTTPS)
-RUN apt update -y && apt install -y nginx openssl
+RUN printf 'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260824T000000Z bullseye main\n\
+deb [check-valid-until=no] http://snapshot.debian.org/archive/debian-security/20260824T000000Z bullseye-security main\n\
+deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260824T000000Z bullseye-updates main\n' \
+> /etc/apt/sources.list
+
+RUN apt-get -o Acquire::Check-Valid-Until=false update && \
+    apt-get install -y --no-install-recommends nginx openssl && \
+    rm -rf /var/lib/apt/lists/*
 
 # Création du dossier pour le certificat de sécurité
 RUN mkdir -p /etc/nginx/ssl

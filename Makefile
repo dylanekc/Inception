@@ -15,9 +15,7 @@ clean: down
 fclean: clean
 	docker compose -f srcs/docker-compose.yml down -v
 	docker volume prune --force
-	sudo rm -rf /home/dylekici/data/mariadb/*
-	sudo rm -rf /home/dylekici/data/wordpress/*
+	rm -rf /home/dylekici/data/mariadb/*
+	rm -rf /home/dylekici/data/wordpress/*
 
 re: fclean all
-
-.PHONY: all up down clean fclean re

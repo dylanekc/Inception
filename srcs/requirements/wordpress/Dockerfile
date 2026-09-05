@@ -1,7 +1,18 @@
 FROM debian:bullseye
 
-# Installation de PHP et des outils nécessaires pour lire la base de données
-RUN apt update -y && apt install -y php7.4-fpm php7.4-mysql curl mariadb-client
+RUN printf 'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260824T000000Z bullseye main\n\
+deb [check-valid-until=no] http://snapshot.debian.org/archive/debian-security/20260824T000000Z bullseye-security main\n\
+deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260824T000000Z bullseye-updates main\n' \
+> /etc/apt/sources.list
+
+RUN apt-get -o Acquire::Check-Valid-Until=false update && \
+    apt-get install -y --no-install-recommends \
+        php7.4-fpm \
+        php7.4-mysql \
+        curl \
+        ca-certificates \
+        mariadb-client && \
+    rm -rf /var/lib/apt/lists/*
 
 # Création du dossier d'accueil de ton site
 RUN mkdir -p /var/www/html
