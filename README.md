@@ -81,3 +81,15 @@ Le Dockerfile sert de recette de fabrication pour installer les programmes, copi
 
 
 je lance make, qui exécute le docker-compose.yml. Ce dernier lit les Dockerfile pour construire les images, puis les allume en conteneurs. Au démarrage, ces conteneurs lancent mes scripts, se parlent sur le même réseau privé, et finalement NGINX affiche ma page WordPress !"
+
+
+
+
+https://dylekici.42.fr:4443/wp-admin/
+
+------
+
+google-chrome --user-data-dir=/tmp/test42 --host-resolver-rules="MAP dylekici.42.fr 127.0.0.1" --ignore-certificate-errors "https://dylekici.42.fr:4443/wp-admin/"
+
+
+ssh dylekici@127.0.0.1 -p 2222

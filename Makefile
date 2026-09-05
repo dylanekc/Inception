@@ -1,19 +1,22 @@
 all:
-	mkdir -p /home/dylekcii/data/mariadb
-	mkdir -p /home/dylekcii/data/wordpress
-	docker-compose -f srcs/docker-compose.yml up -d --build
+	mkdir -p /home/dylekici/data/mariadb
+	mkdir -p /home/dylekici/data/wordpress
+	docker compose -f srcs/docker-compose.yml up -d --build
 
 up:
-	cd srcs && docker-compose up -d --build
+	docker compose -f srcs/docker-compose.yml up -d --build
 
 down:
-	cd srcs && docker-compose down
+	docker compose -f srcs/docker-compose.yml down
 
 clean: down
 	docker system prune -a --force
 
 fclean: clean
+	docker compose -f srcs/docker-compose.yml down -v
 	docker volume prune --force
+	sudo rm -rf /home/dylekici/data/mariadb/*
+	sudo rm -rf /home/dylekici/data/wordpress/*
 
 re: fclean all
 
