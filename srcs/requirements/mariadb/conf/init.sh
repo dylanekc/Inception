@@ -1,18 +1,45 @@
 #!/bin/bash
 
-# On démarre le service MariaDB en arrière-plan juste pour le configurer
+set -e
+
+echo "=== MariaDB initialization ==="
+
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+    echo "Initializing MariaDB database..."
+    mariadb-install-db --user=mysql --datadir=/var/lib/mysql
+fi
+
+chown -R mysql:mysql /var/lib/mysql
+
+echo "Starting MariaDB temporarily..."
 service mariadb start
-sleep 2
 
-# On utilise tes variables du fichier .env pour créer la base et l'utilisateur
-mariadb -e "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;"
-mariadb -e "CREATE USER IF NOT EXISTS \`${MYSQL_USER}\`@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
-mariadb -e "GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO \`${MYSQL_USER}\`@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
-mariadb -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';"
-mariadb -e "FLUSH PRIVILEGES;"
+echo "Waiting for MariaDB..."
+until mariadb-admin ping --silent; do
+    sleep 1
+done
 
-# On éteint le service en arrière-plan
-mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} shutdown
+echo "MariaDB is ready!"
 
-# On relance MariaDB au premier plan pour que le conteneur reste allumé
+mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" <<-EOF
+CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;
+
+CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
+
+ALTER USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
+
+GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';
+
+ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
+
+FLUSH PRIVILEGES;
+EOF
+
+echo "MariaDB users and database configured."
+
+mysqladmin -u root -p"${MYSQL_ROOT_PASSWORD}" shutdown
+
+echo "Starting MariaDB in foreground..."
+
 exec mysqld_safe
+
